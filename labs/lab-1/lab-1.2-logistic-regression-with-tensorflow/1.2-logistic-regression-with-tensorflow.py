@@ -2,7 +2,7 @@
 Lab 1.2 - Logistic Regression with Tensorflow
 
 Author:
-- Rodrigo Ribeiro (rj.ribeiro@campus.fct.unl.pt)
+- Rodrigo Jorge Ribeiro (rj.ribeiro@campus.fct.unl.pt)
 - Ruben Andre Barreiro (r.barreiro@campus.fct.unl.pt)
 
 """
