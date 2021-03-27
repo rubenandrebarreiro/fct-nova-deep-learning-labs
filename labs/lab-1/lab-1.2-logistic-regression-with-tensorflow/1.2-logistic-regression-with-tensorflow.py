@@ -22,7 +22,7 @@ import tensorflow as tensorflow
 import numpy as numpy
 
 # Load the text file (.txt) with the data of the genes, having the form of a Matrix
-matrix_data = numpy.loadtxt("files/gene_data.txt", delimiter="\t")
+matrix_data = numpy.loadtxt("files/gene_data_1.txt", delimiter="\t")
 
 # Retrieve the ys (Labels) of the Data of the Genes
 ys_data_labels = matrix_data[:, -1]

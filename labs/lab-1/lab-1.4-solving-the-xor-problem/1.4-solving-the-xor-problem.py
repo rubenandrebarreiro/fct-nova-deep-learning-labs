@@ -68,7 +68,7 @@ def neural_network_prediction(xs_data_features_to_predict):
 # The function to compute the Cost of the Mean Squared Error Loss,
 # between the predicted ys (Labels) of the Data of the XOR Function,
 # through the Artificial Neural Network (ANN) and the real ys (Labels) of the Data of the XOR Function
-def mean_squared_error_loss(ys_predictions_for_xs_data_features, ys_real_data_labels):
+def compute_mean_squared_error_loss(ys_predictions_for_xs_data_features, ys_real_data_labels):
 
     # Create a TensorFlow Constant from the given set of ys (Labels) of the Data of the XOR Function
     tensorflow_constant_ys_predictions_for_xs_data_features = \
@@ -86,7 +86,7 @@ def mean_squared_error_loss(ys_predictions_for_xs_data_features, ys_real_data_la
     return mean_squared_error_loss_cost
 
 
-# The function to compute the Gradient for the Logistic Loss function
+# The function to compute the Gradient for the Mean Squared Error/Loss function
 def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, weights_neurons, bias):
 
     # Create the Gradient Tape to trace all the Computations and
@@ -97,15 +97,16 @@ def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, weights_n
         # the XOR Function given as arguments of the Artificial Neural Network (ANN)
         neural_network_predicted_ys = neural_network_prediction(xs_data_features_to_predict)
 
-        # Compute the Cost of the Logistic Loss function
-        loss_cost_value = mean_squared_error_loss(neural_network_predicted_ys, ys_real_data_labels)
+        # Compute the Cost of the Mean Squared Error/Loss function
+        loss_cost_value = compute_mean_squared_error_loss(neural_network_predicted_ys, ys_real_data_labels)
 
     # Return the Gradient Tape with all the traced Computations and
     # computed Derivatives, as also, the Weights of Neurons and Bias
     return tape.gradient(loss_cost_value, [weights_neurons, bias]), [weights_neurons, bias]
 
 
-# Configure the TensorFlow's Optimizer for the Stochastic Gradient Descent (SDG), with a Learning Rate of 10%
+# Configure the TensorFlow's Optimizer for the Stochastic Gradient Descent (SDG),
+# with a Learning Rate of 10%
 stochastic_gradient_descent_optimizer = tensorflow.optimizers.SGD(learning_rate=0.1)
 
 # Set the Batch Size (i.e., the number of Samples/Examples) to
@@ -145,7 +146,7 @@ def execute_artificial_neural_network():
             batch_ys_data_labels = ys_data_labels[ys_data_labels_shuffled[start_num_sample:
                                                                           (start_num_sample + batch_size)]]
 
-            # Compute the Gradient for the Logistic Loss function for
+            # Compute the Gradient for the Mean Squared Error/Loss function for
             # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the XOR Function,
             # regarding the Hidden Layer
             gradients_hidden_layer, variables_hidden_layer = \
@@ -156,7 +157,7 @@ def execute_artificial_neural_network():
             # regarding the Hidden Layer
             stochastic_gradient_descent_optimizer.apply_gradients(zip(gradients_hidden_layer, variables_hidden_layer))
 
-            # Compute the Gradient for the Logistic Loss function for
+            # Compute the Gradient for the Mean Squared Error/Loss function for
             # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the XOR Function,
             # regarding the Output Layer
             gradients_output_layer, variables_output_layer = \
@@ -171,11 +172,13 @@ def execute_artificial_neural_network():
         # xs (Features) of the Data of the XOR Function, using the configured Artificial Neural Network (ANN)
         ys_labels_predicted_for_data = neural_network_prediction(xs_data_features)
 
-        # Compute the Cost of the Logistic Loss, between the predicted ys (Labels) of the Data of the XOR Function,
-        # through the Artificial Neural Network (ANN) and the real ys (Labels) of the Data of the XOR Function
-        mean_squared_loss = mean_squared_error_loss(ys_labels_predicted_for_data, ys_data_labels)
+        # Compute the Cost of the Mean Squared Error/Loss, between the predicted ys (Labels) of
+        # the Data of the XOR Function, through the Artificial Neural Network (ANN) and
+        # the real ys (Labels) of the Data of the XOR Function
+        mean_squared_loss = compute_mean_squared_error_loss(ys_labels_predicted_for_data, ys_data_labels)
 
-        # Print the Logistic Loss for the current Epoch of the execution of the Artificial Neural Network (ANN)
+        # Print the Mean Squared Error/Loss for the current Epoch of the execution of
+        # the Artificial Neural Network (ANN)
         print(f"Current Epoch: {current_epoch}, Mean Squared Loss: {mean_squared_loss}...")
 
 
