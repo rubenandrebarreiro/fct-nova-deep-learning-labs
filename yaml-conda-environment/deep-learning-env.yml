@@ -9,7 +9,7 @@ channels:
 # Definition of the Dependencies
 dependencies:
   # Python Programming Language
-  - python
+  - python == 3.7
   # Python's Essentials
   - toolz
   - h5py
@@ -44,9 +44,19 @@ dependencies:
   - spacy
   # Image Processing
   - pillow
-  # Machine Learning and Deep Learning
+  # Machine Learning and Deep Learning, High Performance & Parallel Computing,
+  # Computer Vision, Quantum Computing and others (via PIP)
   - pip:
-    - tensorflow
+    - cirq == 0.8.0
+    - tensorflow == 2.2.1
+    - tensorflow-gpu == 2.2.1
+    - tensorflow-quantum == 0.3.1
+    - PennyLane <= 0.14.1
+    - StrawberryFields <= 0.17.0
+    - qiskit
+    - qiskit[visualization]
+    - qutip
+    - tfq-nightly
     - keras
     - theano
     - torch
@@ -58,6 +68,17 @@ dependencies:
     - kaggle
     - eli5
     - gym
+    - pycuda
+    - kivy
+    - randfacts
+    - pyttsx3
+    - opencv-python
+    - DateTime
+  # High Performance and Parallel Computing
+  - numba
+  - pyspark
+  # Speech/Voice Recognition
+  - SpeechRecognition
   # Others
   - bleach
   - cycler
@@ -66,6 +87,8 @@ dependencies:
   - entrypoints
   - expat
   - freetype
+  - google-api-python-client
+  - googleapis-common-protos
   - html5lib
   - icu
   - ipykernel
@@ -92,7 +115,6 @@ dependencies:
   - nbformat
   - nose
   - notebook
-  - numba
   - openssl
   - pandocfilters
   - path.py
@@ -104,6 +126,7 @@ dependencies:
   - ptyprocess
   - pygments
   - pygpu
+  - pylint
   - pyparsing
   - pyqt
   - python-dateutil
@@ -111,11 +134,13 @@ dependencies:
   - pyzmq
   - qt
   - qtconsole
+  - selenium
   - setuptools
   - simplegeneric
   - sip
   - six
   - sqlite
+  - sympy
   - terminado
   - testpath
   - tk
@@ -125,5 +150,6 @@ dependencies:
   - wheel
   - widgetsnbextension
   - xz
+  - yapf
   - zeromq
   - zlib
