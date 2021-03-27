@@ -4,8 +4,8 @@
       examples in rows and features in columns, why do we encode
       the layers with the weights of each neuron in a column?
 
-# R1: The weights of each Neuron are encoded in a single column-vector
-      in order to multiply the weights by the inputs in one single multiplication;
+# R1: The weights of each neuron are encoded in a single column-vector
+      in order to multiply the weights by the inputs in one single multiplication.
       By doing the Algebraic Matrix Multiplication C = A x B, and if A is the batch of examples,
       with one example per row and one feature per row, and Matrix B is the Matrix
       (or, column-vector) with the weights of one neuron, then the Matrix C will have,
