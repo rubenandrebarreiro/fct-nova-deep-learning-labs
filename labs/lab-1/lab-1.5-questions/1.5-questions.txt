@@ -1,0 +1,30 @@
+# 1.5 - Questions:
+
+# Q1: If the batch of examples is presented as a matrix with
+      examples in rows and features in columns, why do we encode
+      the layers with the weights of each neuron in a column?
+
+# R1: The weights of each Neuron are encoded in a single column-vector
+      in order to multiply the weights by the inputs in one single multiplication;
+      By doing the Algebraic Matrix Multiplication C = A x B, and if A is the batch of examples,
+      with one example per row and one feature per row, and Matrix B is the Matrix
+      (or, column-vector) with the weights of one neuron, then the Matrix C will have,
+      for each row, the sum of the product of the features of each example,
+      by the weights of the neurons, with each neuron in each column and each example in each row,
+      being only needed to add the bias, before they be passed to the Activation Function.
+
+
+# Q2: What is the purpose of the GradientTape object used in the grad function?
+
+# R2: The purpose of the GradientTape object is to trace all the computations/operations and
+      compute the derivatives, backtracking the earlier ones to compute the later ones of
+      the given algebraic tensor, with respect ot the specified variables
+      (the weights of the neurons and the bias, in this case, most specifically,
+       gradient = [weight x example] + bias), as also, the Loss Cost.
+
+
+# Q3: What does the optimizer do when you call the apply_gradients method?
+
+# R3: The Optimizer, when it is called the method apply_gradients, updates the variables,
+      (i.e., gradient = [weight x example] + bias), according to the Algorithm being used,
+      minimizing the Loss Function (i.e., the Error of the Learning/Training process).
