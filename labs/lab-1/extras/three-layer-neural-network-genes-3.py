@@ -39,13 +39,15 @@ xs_data_features_standard_deviation = numpy.std(xs_data_features, 0)
 # Standardize the xs (Features) of the Data of the Genes, from its mean and standard deviation
 xs_data_features_standardized = ((xs_data_features - xs_data_features_means) / xs_data_features_standard_deviation)
 
-# Create one matrix with dimensions 2x2 and one column-vector with dimensions 2x1 for
+# Create two matrices with dimensions 2x2 and one column-vector with dimensions 2x1 for
 # the variables "weights", and fill it with pseudo random values from a Normal Distribution
-weights_neurons_hidden_layer = tensorflow.Variable(tensorflow.random.normal((2, 2)), name="weights_hidden_layer")
+weights_neurons_hidden_layer_1 = tensorflow.Variable(tensorflow.random.normal((2, 2)), name="weights_hidden_layer_1")
+weights_neurons_hidden_layer_2 = tensorflow.Variable(tensorflow.random.normal((2, 2)), name="weights_hidden_layer_2")
 weights_neurons_output_layer = tensorflow.Variable(tensorflow.random.normal((2, 1)), name="weights_output_layer")
 
-# Create a two variables (layers) for the "bias", both initialized with the value 1.0
-bias_hidden_layer = tensorflow.Variable([1.0, 1.0], name="bias_hidden_layer")
+# Create a three variables (layers) for the "bias", both initialized with the value 1.0
+bias_hidden_layer_1 = tensorflow.Variable([1.0, 1.0], name="bias_hidden_layer_1")
+bias_hidden_layer_2 = tensorflow.Variable([1.0, 1.0], name="bias_hidden_layer_2")
 bias_output_layer = tensorflow.Variable([1.0], name="bias_output_layer")
 
 
@@ -59,16 +61,23 @@ def neural_network_prediction(xs_data_features_to_predict):
         tensorflow.constant(xs_data_features_to_predict.astype(numpy.float32))
 
     # Sum the xs (Features) of the Data of the Genes (Dataset 3) weighted by the neurons (features x weights),
-    # in order to build the Artificial Neural Network (ANN), for the Hidden Layer
-    tensorflow_network_hidden_layer = \
+    # in order to build the Artificial Neural Network (ANN), for the first Hidden Layer
+    tensorflow_network_hidden_layer_1 = \
         tensorflow.add(tensorflow.matmul(tensorflow_constant_xs_data_features_to_predict,
-                                         weights_neurons_hidden_layer), bias_hidden_layer,
-                       name="artificial_neural_network_hidden_layer")
+                                         weights_neurons_hidden_layer_1), bias_hidden_layer_1,
+                       name="artificial_neural_network_hidden_layer_1")
+
+    # Sum the xs (Features) of the Data of the Genes (Dataset 3) weighted by the neurons (features x weights),
+    # in order to build the Artificial Neural Network (ANN), for the second Hidden Layer
+    tensorflow_network_hidden_layer_2 = \
+        tensorflow.add(tensorflow.matmul(tensorflow.nn.sigmoid(tensorflow_network_hidden_layer_1, name="hidden_1"),
+                                         weights_neurons_hidden_layer_2), bias_hidden_layer_2,
+                       name="artificial_neural_network_hidden_layer_2")
 
     # Sum the xs (Features) of the Data of the Genes (Dataset 3) weighted by the neurons (features x weights),
     # in order to build the Artificial Neural Network (ANN), for the Output Layer
     tensorflow_network_output_layer = \
-        tensorflow.add(tensorflow.matmul(tensorflow.nn.sigmoid(tensorflow_network_hidden_layer, name="hidden"),
+        tensorflow.add(tensorflow.matmul(tensorflow.nn.sigmoid(tensorflow_network_hidden_layer_2, name="hidden_2"),
                                          weights_neurons_output_layer), bias_output_layer,
                        name="artificial_neural_network_output_layer")
 
@@ -130,11 +139,17 @@ num_batches_per_epoch = (xs_data_features_standardized.shape[0] // batch_size)
 
 # Set the number of Epochs (i.e., the number of times) that the Learning Algorithm
 # (the Stochastic Gradient Descent (SDG), in this case) will work through the entire Dataset
-num_epochs = 4000
+num_epochs = 6000
+
+# Initialize the sum of the Logistic Loss
+logistic_loss_sum = 0
 
 
 # Execute the Artificial Neural Network (ANN), for the the Prediction of the Data of the Genes (Dataset 3)
 def execute_artificial_neural_network():
+
+    # Define the scope for the sum of the Logistic Loss
+    global logistic_loss_sum
 
     # For each Epoch (i.e., each step of the Learning Algorithm)
     for current_epoch in range(num_epochs):
@@ -160,14 +175,27 @@ def execute_artificial_neural_network():
 
             # Compute the Gradient for the Logistic Loss function for
             # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the Genes (Dataset 3),
-            # regarding the Hidden Layer
-            gradients_hidden_layer, variables_hidden_layer = \
+            # regarding the first Hidden Layer
+            gradients_hidden_layer_1, variables_hidden_layer_1 = \
                 compute_gradient(batch_xs_data_features, batch_ys_data_labels,
-                                 weights_neurons_hidden_layer, bias_hidden_layer)
+                                 weights_neurons_hidden_layer_1, bias_hidden_layer_1)
+
+            # Apply the Gradients previously computed to the Learning Algorithm (Stochastic Gradient Descent (SDG)),
+            # regarding the first Hidden Layer
+            stochastic_gradient_descent_optimizer.apply_gradients(zip(gradients_hidden_layer_1,
+                                                                      variables_hidden_layer_1))
+
+            # Compute the Gradient for the Logistic Loss function for
+            # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the Genes (Dataset 3),
+            # regarding the Hidden Layer
+            gradients_hidden_layer_2, variables_hidden_layer_2 = \
+                compute_gradient(batch_xs_data_features, batch_ys_data_labels,
+                                 weights_neurons_hidden_layer_2, bias_hidden_layer_2)
 
             # Apply the Gradients previously computed to the Learning Algorithm (Stochastic Gradient Descent (SDG)),
             # regarding the Hidden Layer
-            stochastic_gradient_descent_optimizer.apply_gradients(zip(gradients_hidden_layer, variables_hidden_layer))
+            stochastic_gradient_descent_optimizer.apply_gradients(zip(gradients_hidden_layer_2,
+                                                                      variables_hidden_layer_2))
 
             # Compute the Gradient for the Logistic Loss function for
             # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the Genes (Dataset 3),
@@ -190,6 +218,15 @@ def execute_artificial_neural_network():
 
         # Print the Logistic Loss for the current Epoch of the execution of the Artificial Neural Network (ANN)
         print(f"Current Epoch: {current_epoch}, Logistic Loss: {logistic_loss}...")
+
+        # Sum the current Logistic Loss to its accumulator
+        logistic_loss_sum = (logistic_loss_sum + logistic_loss)
+
+    # Compute the average of the Logistic Loss
+    logistic_loss_average = (logistic_loss_sum / num_epochs)
+
+    # Print the information about the average of the Logistic Loss
+    print("\nThe average Logistic Loss for {} Epochs is: {}\n".format(num_epochs, logistic_loss_average))
 
 
 # Print the configuration for the Artificial Neural Network (ANN) being used

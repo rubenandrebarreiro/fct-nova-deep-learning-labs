@@ -108,9 +108,15 @@ num_batches_per_epoch = (xs_data_features.shape[0] // batch_size)
 # (the Stochastic Gradient Descent (SDG), in this case) will work through the entire Dataset
 num_epochs = 4000
 
+# Initialize the sum of the Mean Squared Loss
+mean_squared_loss_sum = 0
+
 
 # Execute the Artificial Neural Network (ANN), for the the Prediction of the Data of the OR Function
 def execute_artificial_neural_network():
+
+    # Define the scope for the sum of the Mean Squared Loss
+    global mean_squared_loss_sum
 
     # For each Epoch (i.e., each step of the Learning Algorithm)
     for current_epoch in range(num_epochs):
@@ -150,6 +156,15 @@ def execute_artificial_neural_network():
 
         # Print the Logistic Loss for the current Epoch of the execution of the Artificial Neural Network (ANN)
         print(f"Current Epoch: {current_epoch}, Mean Squared Loss: {mean_squared_loss}...")
+
+        # Sum the current Mean Squared Loss to its accumulator
+        mean_squared_loss_sum = (mean_squared_loss_sum + mean_squared_loss)
+
+    # Compute the average of the Mean Squared Loss
+    mean_squared_loss_average = (mean_squared_loss_sum / num_epochs)
+
+    # Print the information about the average of the Logistic Loss
+    print("\nThe average Mean Squared Loss for {} Epochs is: {}\n".format(num_epochs, mean_squared_loss_average))
 
 
 # Print the configuration for the Artificial Neural Network (ANN) being used
