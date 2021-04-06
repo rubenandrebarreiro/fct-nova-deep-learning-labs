@@ -1,5 +1,5 @@
 """
-Lab 2.2 - Tensorboard (Tutorial) - Logistic Regression (Loss Function fixed/stable)
+Lab 2.2 - Tensorboard (Tutorial) - Logistic Regression (Loss Function fixed/stable with Logits as Activation Function)
 
 Author:
 - Rodrigo Jorge Ribeiro (rj.ribeiro@campus.fct.unl.pt)
@@ -94,7 +94,7 @@ def neural_network_prediction(xs_data_features_to_predict):
 # - logit(p) = log( [p / (1 - p)] ) = log(p) - log( [1 - p] ) = - log( [1 - p] ) + log(p) =
 #            = - ( log( [1 - p] ) - log(p) ) = - [ log( [1 - p] / p ) ] =
 #            = - log( [ (1 / p) - (p / p) ] ) = - log( [ (1 / p) - 1 ] )
-def logits(xs_data_features_to_predict):
+def compute_logits(xs_data_features_to_predict):
 
     # Sum the xs (Features) of the Data of the Genes weighted by the neurons (features x weights),
     # in order to build the Artificial Neural Network (ANN)
@@ -112,7 +112,7 @@ def logits(xs_data_features_to_predict):
 def compute_logistic_error_loss(xs_data_features_to_predict, ys_real_data_labels):
 
     # Compute the Logit Function to the xs (Features) of the Data of the Genes
-    tensorflow_network = logits(xs_data_features_to_predict)
+    tensorflow_network = compute_logits(xs_data_features_to_predict)
 
     # Compute the Cost of Logistic Error Loss, with the Logits as argument,
     # which is the activation value before applying the Sigmoid Function
