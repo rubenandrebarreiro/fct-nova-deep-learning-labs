@@ -34,7 +34,7 @@ root_log_directory = "logs"
 log_directory = "{}/model-{}/".format(root_log_directory, now_date_time)
 
 
-# Load the text file (.txt) with the data of the Miles Per Gallon (MPG),
+# Load the tsv file (.tsv) with the Data of the Miles Per Gallon (MPG),
 # having the form of a Matrix, with 392 examples (rows)
 matrix_data = numpy.loadtxt("files/auto_mpg.tsv", skiprows=1)
 
@@ -66,7 +66,7 @@ ys_data_labels_standardized_for_training = matrix_data_shuffled_standardized[:30
 # the Data of the Miles Per Gallon (MPG), for the Validation of the Model
 xs_data_features_standardized_for_validation = matrix_data_shuffled_standardized[300:, 1:]
 
-# Retrieve the ys (Labels) of the first 300 examples of
+# Retrieve the ys (Labels) of the last 92 examples of
 # the Data of the Miles Per Gallon (MPG), for the Validation of the Model
 ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[300:, 0]
 
@@ -200,7 +200,7 @@ def neural_network_prediction(inputs_xs_data):
 # the Data of the Miles Per Gallon (MPG)
 def compute_mean_squared_error_loss(ys_predictions_for_xs_data_features, ys_real_data_labels):
 
-    # Create a TensorFlow Constant from the given set of ys (Labels) of the Data of the XOR Function
+    # Create a TensorFlow Constant from the given set of ys (Labels) of the Data of the Miles Per Gallon (MPG)
     tensorflow_constant_ys_predictions_for_xs_data_features = \
         tensorflow.constant(ys_real_data_labels)
 
@@ -224,7 +224,7 @@ def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, layer_var
     with tensorflow.GradientTape() as tape:
 
         # Predict the ys (Labels) for the xs (Features) of the Data of
-        # the XOR Function given as arguments of the Artificial Neural Network (ANN)
+        # the Miles Per Gallon (MPG) given as arguments of the Artificial Neural Network (ANN)
         neural_network_predicted_ys = neural_network_prediction(xs_data_features_to_predict)
 
         # Compute the Cost of the Mean Squared Error/Loss function
