@@ -9,7 +9,13 @@ Author:
 
 # Import the Libraries and Packages
 
-#
+# Import the Operative System Library as operative_system
+import os as operative_system
+
+# Disable all the Debugging Logs from TensorFlow Library
+operative_system.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Import Keras from the TensorFlow Library
 from tensorflow import keras
 
 # Import the Stochastic Gradient Descent (SGD) Optimizer
@@ -29,15 +35,15 @@ from tensorflow.keras.layers import Activation, Flatten, Dropout, Dense
 # Constants
 
 # The Learning Rate for the Stochastic Gradient Descent (SGD) Optimizer of
-# the Convolution Neural Network (CNN)
-INITIAL_LEARNING_RATE = 0.05
+# the Convolution Neural Network (CNN), as 1%
+INITIAL_LEARNING_RATE = 0.01
 
 # The Number of Epochs for the Stochastic Gradient Descent (SGD) Optimizer of
-# the Convolution Neural Network (CNN)
+# the Convolution Neural Network (CNN), as 25
 NUM_EPOCHS = 25
 
-# The Size of the Batch for the the Convolution Neural Network (CNN)
-BATCH_SIZE = 32
+# The Size of the Batch for the the Convolution Neural Network (CNN), as 128
+BATCH_SIZE = 128
 
 
 # Load the Dataset of the Fashion Modified NIST (Fashion MNIST),
@@ -144,6 +150,13 @@ def create_convolution_neural_network_model():
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and a 2x2 Pool
     convolution_neural_network_model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
+    # Flatten the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST)
+    # NOTE:
+    # - This is needed to flatten the input into a single dimension for the features,
+    #   which is what the next Dense Layer needs;
+    convolution_neural_network_model.add(Flatten())
+
     # Add a Dense Matrix of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and 10 Units
     convolution_neural_network_model.add(Dense(512))
@@ -166,6 +179,13 @@ def create_convolution_neural_network_model():
     # - Dropout Layer in Convolution Neural Networks is generally, not very useful;
     # - Comment/Uncomment, if you want to try it or not;
     convolution_neural_network_model.add(Dropout(0.5))
+
+    # Flatten the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST)
+    # NOTE:
+    # - This is needed to flatten the input into a single dimension for the features,
+    #   which is what the next Dense Layer needs;
+    convolution_neural_network_model.add(Flatten())
 
     # Add a Dense Matrix of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and 10 Units
@@ -197,11 +217,18 @@ cnn_model.compile(loss="categorical_crossentropy",
                   optimizer=stochastic_gradient_descent_optimizer,
                   metrics=["accuracy"])
 
+# Print the Log for the Fitting of the Convolution Neural Network (CNN) Model
+print(f"\nFitting the Convolution Neural Network (CNN) Model for {NUM_EPOCHS} Epochs "
+      f"with a Batch Size of {BATCH_SIZE} and an Initial Learning Rate of {INITIAL_LEARNING_RATE}...\n")
+
 # Train the Convolution Neural Network (CNN) Model for NUM_EPOCHS,
 # with the Training Data for the Training Set and the Testing Data for the Validation Set
 cnn_model_training_history = cnn_model.fit(xs_features_training_data, ys_labels_training_data,
                                            validation_data=(xs_features_testing_data, ys_labels_testing_data),
                                            batch_size=BATCH_SIZE, epochs=NUM_EPOCHS)
+
+# Print the final Log for the Fitting of the Convolution Neural Network (CNN) Model
+print("\nThe Fitting of the Convolution Neural Network (CNN) Model is complete!!!\n")
 
 # Save the Weights of the Neurons of the Convolution Neural Network (CNN) Model
 cnn_model.save_weights("fashion_mnist_model.h5")
