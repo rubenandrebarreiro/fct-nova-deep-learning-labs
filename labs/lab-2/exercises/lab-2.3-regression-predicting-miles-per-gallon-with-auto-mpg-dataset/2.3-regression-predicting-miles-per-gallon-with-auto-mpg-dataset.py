@@ -24,6 +24,25 @@ import numpy as numpy
 # Import the DateTime Module from the DateTime Library
 from datetime import datetime as date_time
 
+
+# Constants
+
+# The Learning Rate for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Convolution Neural Network (ANN), as 0.5%
+INITIAL_LEARNING_RATE = 0.005
+
+# The Number of Epochs for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Artificial Neural Network (ANN), as 600
+NUM_EPOCHS = 1000
+
+# The Size of the Batch for the the Artificial Neural Network (ANN), as 32
+BATCH_SIZE = 32
+
+# The Momentum for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Artificial Neural Network (ANN), as 90%
+MOMENTUM = 0.9
+
+
 # Retrieve the current DateTime, as custom format
 now_date_time = date_time.utcnow().strftime("%Y%m%d%H%M%S")
 
@@ -54,21 +73,21 @@ matrix_data_shuffled_standard_deviation = numpy.std(matrix_data_shuffled, axis=0
 matrix_data_shuffled_standardized = \
     ((matrix_data_shuffled - matrix_data_shuffled_means) / matrix_data_shuffled_standard_deviation)
 
-# Retrieve the xs (Features) of the first 300 examples of
+# Retrieve the xs (Features) of the first 275 examples of
 # the Data of the Miles Per Gallon (MPG), for the Training of the Model
-xs_data_features_standardized_for_training = matrix_data_shuffled_standardized[:300, 1:]
+xs_data_features_standardized_for_training = matrix_data_shuffled_standardized[:275, 1:]
 
-# Retrieve the ys (Labels) of the first 300 examples of
+# Retrieve the ys (Labels) of the first 275 examples of
 # the Data of the Miles Per Gallon (MPG), for the Training of the Model
-ys_data_labels_standardized_for_training = matrix_data_shuffled_standardized[:300, 0]
+ys_data_labels_standardized_for_training = matrix_data_shuffled_standardized[:275, 0]
 
-# Retrieve the xs (Features) of the last 92 examples of
+# Retrieve the xs (Features) of the last 117 examples of
 # the Data of the Miles Per Gallon (MPG), for the Validation of the Model
-xs_data_features_standardized_for_validation = matrix_data_shuffled_standardized[300:, 1:]
+xs_data_features_standardized_for_validation = matrix_data_shuffled_standardized[117:, 1:]
 
-# Retrieve the ys (Labels) of the last 92 examples of
+# Retrieve the ys (Labels) of the last 117 examples of
 # the Data of the Miles Per Gallon (MPG), for the Validation of the Model
-ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[300:, 0]
+ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[117:, 0]
 
 
 # Function to generate the Variables of a Layer for the Artificial Neural Network (ANN),
@@ -122,7 +141,7 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
 
         # Set the previous xs (Features) of
         # the current Layer of the Artificial Neural Network (ANN)
-        previous_inputs_xs_data = inputs_xs_data
+        previous_inputs_xs_data = layer_neurons_weights
 
     # Return the Artificial Neural Network (ANN) and the Variables
     # (Weights of the Neurons and the Bias) for each Layer of it
@@ -130,7 +149,7 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
 
 
 # Set the number of Neurons for each Layer of the Artificial Neural Network (ANN)
-num_neurons_for_each_layer = [7, 7, 1]
+num_neurons_for_each_layer = [30, 30, 1]
 
 # Create the Artificial Neural Network (ANN) and the Variables for each Layer
 # (i.e., the Weights of the Neurons and the Bias), for the xs (Features) of the Data of the Miles Per Gallon (MPG)
@@ -201,13 +220,11 @@ def neural_network_prediction(inputs_xs_data):
 def compute_mean_squared_error_loss(ys_predictions_for_xs_data_features, ys_real_data_labels):
 
     # Create a TensorFlow Constant from the given set of ys (Labels) of the Data of the Miles Per Gallon (MPG)
-    tensorflow_constant_ys_predictions_for_xs_data_features = \
-        tensorflow.constant(ys_real_data_labels)
+    tensorflow_constant_ys_real_data_labels = tensorflow.constant(ys_real_data_labels)
 
     # Compute the Cost of the Differences of the Squared Error Loss, individually
     squared_error_loss_differences = tensorflow.math\
-        .square(tensorflow_constant_ys_predictions_for_xs_data_features -
-                ys_predictions_for_xs_data_features)
+        .square(tensorflow_constant_ys_real_data_labels - ys_predictions_for_xs_data_features)
 
     # Compute global the Cost of the Mean Squared Error Loss
     mean_squared_error_loss_cost = tensorflow.reduce_mean(squared_error_loss_differences)
@@ -269,20 +286,13 @@ file_writer = tensorflow.summary.create_file_writer(log_directory)
 # Write the graph for the Tensorboard
 write_graph_tensorboard(xs_data_features_standardized_for_training, file_writer)
 
-# Configure the TensorFlow's Optimizer for the Stochastic Gradient Descent (SDG), with a Learning Rate of 10%
-stochastic_gradient_descent_optimizer = tensorflow.optimizers.SGD(learning_rate=0.005, momentum=0.9)
-
-# Set the Batch Size (i.e., the number of Samples/Examples) to
-# work through before updating the Internal Model Parameters of the Learning Algorithm,
-# and, for the Stochastic Gradient Descent (SDG), is common to use the value 1 as hyper-parameter
-batch_size = 32
+# Configure the TensorFlow's Optimizer for the Stochastic Gradient Descent (SDG), with a Learning Rate of 0.5%
+stochastic_gradient_descent_optimizer = tensorflow.optimizers.SGD(learning_rate=INITIAL_LEARNING_RATE,
+                                                                  momentum=MOMENTUM,
+                                                                  decay=(INITIAL_LEARNING_RATE / NUM_EPOCHS))
 
 # Set the number of Batches, per Epoch
-num_batches_per_epoch = (xs_data_features_standardized_for_training.shape[0] // batch_size)
-
-# Set the number of Epochs (i.e., the number of times) that the Learning Algorithm
-# (the Stochastic Gradient Descent (SDG), in this case) will work through the entire Dataset
-num_epochs = 1000
+num_batches_per_epoch = (xs_data_features_standardized_for_training.shape[0] // BATCH_SIZE)
 
 # Initialize the sum of the Mean Squared Loss, for the Training Set
 training_mean_squared_loss_sum = 0
@@ -301,7 +311,7 @@ def execute_artificial_neural_network(file_writer_logs):
     global validation_mean_squared_loss_sum
 
     # For each Epoch (i.e., each step of the Learning Algorithm)
-    for current_epoch in range(num_epochs):
+    for current_epoch in range(NUM_EPOCHS):
 
         # Shuffle the ys (Labels) for the Data of the Miles Per Gallon (MPG)
         ys_data_labels_shuffled = numpy.arange(len(ys_data_labels_standardized_for_training))
@@ -311,20 +321,20 @@ def execute_artificial_neural_network(file_writer_logs):
         for current_num_batch in range(num_batches_per_epoch):
 
             # Define the start index of the Samples
-            start_num_sample = (current_num_batch * batch_size)
+            start_num_sample = (current_num_batch * BATCH_SIZE)
 
             # Retrieve the chosen Samples from the xs (Features) of the Data of the Miles Per Gallon (MPG),
             # from the Training Set
             batch_xs_data_features_standardized_for_training = \
                 tensorflow.constant(xs_data_features_standardized_for_training[ys_data_labels_shuffled[start_num_sample:
-                                                                               (start_num_sample + batch_size)], :]
+                                                                               (start_num_sample + BATCH_SIZE)], :]
                                     .astype(numpy.float32))
 
             # Retrieve the chosen Samples from the ys (Labels) of the Data of the Miles Per Gallon (MPG),
             # from the Training Set
             batch_ys_data_labels_standardized_for_training = \
                 tensorflow.constant(ys_data_labels_standardized_for_training[ys_data_labels_shuffled[start_num_sample:
-                                                                             (start_num_sample + batch_size)]]
+                                                                             (start_num_sample + BATCH_SIZE)]]
                                     .astype(numpy.float32))
 
             # Compute the Gradient for the Mean Squared Error Loss function for
@@ -360,7 +370,7 @@ def execute_artificial_neural_network(file_writer_logs):
             ((compute_mean_squared_error_loss(
                 tensorflow.constant(ys_labels_predicted_for_training_set_data),
                 tensorflow.constant(ys_data_labels_standardized_for_training
-                                    .astype(numpy.float32)))**0.5)*matrix_data_shuffled_standard_deviation[0])
+                                    .astype(numpy.float32))))**0.5*matrix_data_shuffled_standard_deviation[0])
 
         # Compute the Cost of the Mean Squared Error Loss, between the predicted ys (Labels) of
         # the Data of the Miles Per Gallon (MPG), from the Validation Set,
@@ -370,7 +380,7 @@ def execute_artificial_neural_network(file_writer_logs):
             ((compute_mean_squared_error_loss(
                 tensorflow.constant(ys_labels_predicted_for_validation_set_data),
                 tensorflow.constant(ys_data_labels_standardized_for_validation
-                                    .astype(numpy.float32)))**0.5)*matrix_data_shuffled_standard_deviation[0])
+                                    .astype(numpy.float32))))**0.5*matrix_data_shuffled_standard_deviation[0])
 
         # Print the Mean Squared Error Loss for the current Epoch of
         # the execution of the Artificial Neural Network (ANN), for the Training and Validation Sets
@@ -397,24 +407,24 @@ def execute_artificial_neural_network(file_writer_logs):
     file_writer_logs.close()
 
     # Compute the average of the Mean Squared Loss, for the Training Set
-    training_mean_squared_loss_average = (training_mean_squared_loss_sum / num_epochs)
+    training_mean_squared_loss_average = (training_mean_squared_loss_sum / NUM_EPOCHS)
 
     # Compute the average of the Mean Squared Loss, for the Validation Set
-    validation_mean_squared_loss_average = (validation_mean_squared_loss_sum / num_epochs)
+    validation_mean_squared_loss_average = (validation_mean_squared_loss_sum / NUM_EPOCHS)
 
     # Print the information about the average of the Mean Squared Loss, for the Training Set
     print("\nThe average Mean Squared Loss for {} Epochs, in the Training Set, is: {}\n"
-          .format(num_epochs, training_mean_squared_loss_average))
+          .format(NUM_EPOCHS, training_mean_squared_loss_average))
 
     # Print the information about the average of the Mean Squared Loss, for the Validation Set
     print("\nThe average Mean Squared Loss for {} Epochs, in the Validation Set, is: {}\n"
-          .format(num_epochs, validation_mean_squared_loss_average))
+          .format(NUM_EPOCHS, validation_mean_squared_loss_average))
 
 
 # Print the configuration for the Artificial Neural Network (ANN) being used
 print("\n\nStart the execution of the Artificial Neural Network (ANN), with {} Epochs, Bath Size of {},\n"
       "with the Learning Algorithm of Stochastic Gradient Descent (SDG), "
-      "for the Dataset of the Miles Per Gallon (MPG)...\n".format(num_epochs, batch_size))
+      "for the Dataset of the Miles Per Gallon (MPG)...\n".format(NUM_EPOCHS, BATCH_SIZE))
 
 # Start the execution of the Artificial Neural Network (ANN), for the the Prediction of
 # the Data of the Miles Per Gallon (MPG)
