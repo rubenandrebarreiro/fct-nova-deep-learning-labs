@@ -63,7 +63,7 @@ ys_data_validation_labels = keras.utils.to_categorical(ys_training_labels[50000:
 def generate_artificial_neural_network_layer(inputs_xs_data, num_neurons):
 
     # Create the Weights of the Neurons for the Layer of Neurons
-    layer_neurons_weights = tensorflow.Variable(tensorflow.random.normal((inputs_xs_data.shape[1]**2, num_neurons),
+    layer_neurons_weights = tensorflow.Variable(tensorflow.random.normal((inputs_xs_data.shape[1], num_neurons),
                                                                          stddev=(1 / num_neurons)))
 
     # Create the Bias for the Layer of Neurons
@@ -108,7 +108,7 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
 
         # Set the previous xs (Features) of
         # the current Layer of the Artificial Neural Network (ANN)
-        previous_inputs_xs_data = inputs_xs_data
+        previous_inputs_xs_data = layer_neurons_weights
 
     # Return the Artificial Neural Network (ANN) and the Variables
     # (Weights of the Neurons and the Bias) for each Layer of it
@@ -116,7 +116,7 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
 
 
 # Set the number of Neurons for each Layer of the Artificial Neural Network (ANN)
-num_neurons_for_each_layer = [784, 784, 10]
+num_neurons_for_each_layer = [28, 784, 10]
 
 # Create the Artificial Neural Network (ANN) and the Variables for each Layer
 # (i.e., the Weights of the Neurons and the Bias), for the xs (Features) of the Data of the Modified NIST (MNIST)
@@ -151,9 +151,9 @@ def neural_network_prediction(inputs_xs_data):
                                                  artificial_neural_network_layer_neurons_weights),
                                artificial_neural_network_layer_bias, name="net")
 
-            # Compute the Rectified Linear Unit (ReLu) as Activation Function of
+            # Compute the SoftMax as Activation Function of
             # the Artificial Neural Network (ANN)
-            artificial_neural_network = tensorflow.nn.leaky_relu(artificial_neural_network, name="relu")
+            artificial_neural_network = tensorflow.nn.softmax(artificial_neural_network, name="softmax")
 
         # Increment the number of the current Layer of the Artificial Neural Network (ANN)
         num_artificial_neural_network_layer += 1
@@ -177,7 +177,7 @@ def neural_network_prediction(inputs_xs_data):
                            last_artificial_neural_network_layer_bias)
 
     # Reshape the Artificial Neural Network (ANN), for the return the output of the Neural Network
-    return tensorflow.reshape(artificial_neural_network, [-1])
+    return artificial_neural_network
 
 
 # The function to compute the Cost of the Logistic Error Loss,
