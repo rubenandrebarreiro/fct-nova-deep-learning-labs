@@ -29,7 +29,7 @@ from datetime import datetime as date_time
 
 # The Learning Rate for the Stochastic Gradient Descent (SGD) Optimizer of
 # the Convolution Neural Network (ANN), as 0.5%
-INITIAL_LEARNING_RATE = 0.05
+INITIAL_LEARNING_RATE = 0.005
 
 # The Number of Epochs for the Stochastic Gradient Descent (SGD) Optimizer of
 # the Artificial Neural Network (ANN), as 600
