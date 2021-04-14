@@ -78,19 +78,9 @@ def create_convolution_neural_network_model():
     # Create the Sequential Model for the Convolution Neural Network (CNN)
     convolution_neural_network_model = Sequential()
 
+    # 1st CONV => RELU => CONV => RELU => POOL layer set
+
     # Add a first Convolution 2D Matrix, for the Input Data of
-    # the Fashion Modified NIST (Fashion MNIST),
-    # with 32 Filters and a Kernel 3x3, Same Padding and
-    # an Input Shape having a Batch Size of 28, with 28 Steps, as also,
-    # 1 Input Dimension (for one Color Channel - Grayscale Color)
-    convolution_neural_network_model.add(Conv2D(32, (3, 3), padding="same", input_shape=(28, 28, 1)))
-
-    # Add the Rectified Linear Unit (ReLU) as Activation Function Layer,
-    # for the Data of the Convolution Neural Network (CNN),
-    # with the Data of the Fashion Modified NIST (Fashion MNIST)
-    convolution_neural_network_model.add(Activation("relu"))
-
-    # Add a second Convolution 2D Matrix, for the previous Data of
     # the Fashion Modified NIST (Fashion MNIST),
     # with 32 Filters and a Kernel 3x3, Same Padding and
     # an Input Shape having a Batch Size of 28, with 28 Steps, as also,
@@ -106,7 +96,25 @@ def create_convolution_neural_network_model():
     # by re-centering and re-scaling the Data of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and
     # making the Convolution Neural Network (CNN) faster and more stable
-    convolution_neural_network_model.add(BatchNormalization())
+    convolution_neural_network_model.add(BatchNormalization(axis=-1))
+
+    # Add a second Convolution 2D Matrix, for the previous Data of
+    # the Fashion Modified NIST (Fashion MNIST),
+    # with 32 Filters and a Kernel 3x3, Same Padding and
+    # an Input Shape having a Batch Size of 28, with 28 Steps, as also,
+    # 1 Input Dimension (for one Color Channel - Grayscale Color)
+    convolution_neural_network_model.add(Conv2D(32, (3, 3), padding="same"))
+
+    # Add the Rectified Linear Unit (ReLU) as Activation Function Layer,
+    # for the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST)
+    convolution_neural_network_model.add(Activation("relu"))
+
+    # Add the Batch Normalization Layer, to normalize the previous Layer,
+    # by re-centering and re-scaling the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST) and
+    # making the Convolution Neural Network (CNN) faster and more stable
+    convolution_neural_network_model.add(BatchNormalization(axis=-1))
 
     # Add a Max Pooling 2D Sample-Based Discretization Process Layer,
     # for the Data of the Convolution Neural Network (CNN),
@@ -121,34 +129,58 @@ def create_convolution_neural_network_model():
     # - Comment/Uncomment, if you want to try it or not;
     convolution_neural_network_model.add(Dropout(0.25))
 
+    # 2nd CONV => RELU => CONV => RELU => POOL layer set
+
     # Add a first Convolution 2D Matrix, for the Input Data of
     # the Fashion Modified NIST (Fashion MNIST),
     # with 64 Filters and a Kernel 3x3, Same Padding and
     # an Input Shape having a Batch Size of 28, with 28 Steps, as also,
     # 1 Input Dimension (for one Color Channel - Grayscale Color)
-    convolution_neural_network_model.add(Conv2D(64, (3, 3), padding="same", input_shape=(28, 28, 1)))
+    convolution_neural_network_model.add(Conv2D(64, (3, 3), padding="same"))
 
     # Add the Rectified Linear Unit (ReLU) as Activation Function Layer,
     # for the Data of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST)
     convolution_neural_network_model.add(Activation("relu"))
+
+    # Add the Batch Normalization Layer, to normalize the previous Layer,
+    # by re-centering and re-scaling the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST) and
+    # making the Convolution Neural Network (CNN) faster and more stable
+    convolution_neural_network_model.add(BatchNormalization(axis=-1))
 
     # Add a second Convolution 2D Matrix, for the previous Data of
     # the Fashion Modified NIST (Fashion MNIST),
     # with 64 Filters and a Kernel 3x3, Same Padding and
     # an Input Shape having a Batch Size of 28, with 28 Steps, as also,
     # 1 Input Dimension (for one Color Channel - Grayscale Color)
-    convolution_neural_network_model.add(Conv2D(64, (3, 3), padding="same", input_shape=(28, 28, 1)))
+    convolution_neural_network_model.add(Conv2D(64, (3, 3), padding="same"))
 
     # Add the Rectified Linear Unit (ReLU) as Activation Function Layer,
     # for the Data of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST)
     convolution_neural_network_model.add(Activation("relu"))
 
+    # Add the Batch Normalization Layer, to normalize the previous Layer,
+    # by re-centering and re-scaling the Data of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST) and
+    # making the Convolution Neural Network (CNN) faster and more stable
+    convolution_neural_network_model.add(BatchNormalization(axis=-1))
+
     # Add a Max Pooling 2D Sample-Based Discretization Process Layer,
     # for the Data of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and a 2x2 Pool
     convolution_neural_network_model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    # Add the Dropout Layer, for Regularization of the Convolution Neural Network (CNN),
+    # with the Data of the Fashion Modified NIST (Fashion MNIST),
+    # by using as hyper-parameter, the rate of 25%
+    # NOTE:
+    # - Dropout Layer in Convolution Neural Networks is generally, not very useful;
+    # - Comment/Uncomment, if you want to try it or not;
+    convolution_neural_network_model.add(Dropout(0.25))
+
+    # 1st (and only) set of FC => RELU layers
 
     # Flatten the Data of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST)
@@ -180,12 +212,7 @@ def create_convolution_neural_network_model():
     # - Comment/Uncomment, if you want to try it or not;
     convolution_neural_network_model.add(Dropout(0.5))
 
-    # Flatten the Data of the Convolution Neural Network (CNN),
-    # with the Data of the Fashion Modified NIST (Fashion MNIST)
-    # NOTE:
-    # - This is needed to flatten the input into a single dimension for the features,
-    #   which is what the next Dense Layer needs;
-    convolution_neural_network_model.add(Flatten())
+    # SoftMax Classifier
 
     # Add a Dense Matrix of the Convolution Neural Network (CNN),
     # with the Data of the Fashion Modified NIST (Fashion MNIST) and 10 Units
