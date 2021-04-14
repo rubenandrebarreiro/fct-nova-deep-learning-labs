@@ -24,6 +24,25 @@ import numpy as numpy
 # Import the DateTime Module from the DateTime Library
 from datetime import datetime as date_time
 
+
+# Constants
+
+# The Learning Rate for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Convolution Neural Network (ANN), as 0.5%
+INITIAL_LEARNING_RATE = 0.05
+
+# The Number of Epochs for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Artificial Neural Network (ANN), as 600
+NUM_EPOCHS = 500
+
+# The Size of the Batch for the the Artificial Neural Network (ANN), as 64
+BATCH_SIZE = 32
+
+# The Momentum for the Stochastic Gradient Descent (SGD) Optimizer of
+# the Artificial Neural Network (ANN), as 90%
+MOMENTUM = 0.9
+
+
 # Retrieve the current DateTime, as custom format
 now_date_time = date_time.utcnow().strftime("%Y%m%d%H%M%S")
 
@@ -77,7 +96,7 @@ xs_data_features_standardized_for_validation = matrix_data_shuffled_standardized
 
 # Retrieve the ys (Labels) of the first (0.2 x n) examples of
 # the Data of the Bank Notes, for the Validation of the Model
-ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[num_examples_data_training_set:, 0]
+ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[num_examples_data_training_set:, -1:]
 
 
 # Function to generate the Variables of a Layer for the Artificial Neural Network (ANN),
@@ -86,8 +105,7 @@ ys_data_labels_standardized_for_validation = matrix_data_shuffled_standardized[n
 def generate_artificial_neural_network_layer(inputs_xs_data, num_neurons):
 
     # Create the Weights of the Neurons for the Layer of Neurons
-    layer_neurons_weights = tensorflow.Variable(tensorflow.random.normal((inputs_xs_data.shape[1], num_neurons),
-                                                                         stddev=(1 / num_neurons)))
+    layer_neurons_weights = tensorflow.Variable(tensorflow.random.normal((inputs_xs_data.shape[1], num_neurons)))
 
     # Create the Bias for the Layer of Neurons
     layer_bias = tensorflow.Variable(tensorflow.zeros([num_neurons]))
@@ -103,11 +121,9 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
     # Initialise/Create the Artificial Neural Network
     artificial_neural_network = []
 
-    # Initialise/Create the Weights of the Neurons for each Layer of the Artificial Neural Network (ANN)
-    layers_weights_neurons = []
-
-    # Initialise/Crete Bias for each Layer of the Artificial Neural Network (ANN)
-    layers_biases = []
+    # Initialise/Create the Variables,
+    # i.e., the Weights of the Neurons and Bias for each Layer of the Artificial Neural Network (ANN)
+    layers_variables = []
 
     # Initialise/Create the previous xs (Features) of
     # the current Layer of the Artificial Neural Network (ANN),
@@ -127,29 +143,25 @@ def create_artificial_neural_network(inputs_xs_data, num_neurons_layer):
         # the current Layer of the Artificial Neural Network (ANN)
         artificial_neural_network.append((layer_neurons_weights, layer_bias))
 
-        # Append the computed Weights of the Neurons for
+        # Extend the computed Variables (Weights of the Neurons and the Bias) for
         # the current Layer of the Artificial Neural Network (ANN)
-        layers_weights_neurons.append(layer_neurons_weights)
-
-        # Append the computed Bias for
-        # the current Layer of the Artificial Neural Network (ANN)
-        layers_biases.append(layer_bias)
+        layers_variables.extend((layer_neurons_weights, layer_bias))
 
         # Set the previous xs (Features) of
         # the current Layer of the Artificial Neural Network (ANN)
-        previous_inputs_xs_data = inputs_xs_data
+        previous_inputs_xs_data = layer_neurons_weights
 
     # Return the Artificial Neural Network (ANN) and the Variables
     # (Weights of the Neurons and the Bias) for each Layer of it
-    return artificial_neural_network, layers_weights_neurons, layers_biases
+    return artificial_neural_network, layers_variables
 
 
 # Set the number of Neurons for each Layer of the Artificial Neural Network (ANN)
-num_neurons_for_each_layer = [4, 4, 1]
+num_neurons_for_each_layer = [8, 4, 4, 1]
 
 # Create the Artificial Neural Network (ANN) and the Variables for each Layer
 # (i.e., the Weights of the Neurons and the Bias), for the xs (Features) of the Data of the Bank Notes
-neural_network, weights_neurons_layers, biases_layers = \
+neural_network, variables_layers = \
     create_artificial_neural_network(xs_data_features_standardized_for_training, num_neurons_for_each_layer)
 
 
@@ -217,22 +229,22 @@ def neural_network_prediction(inputs_xs_data):
                                              last_artificial_neural_network_layer_neurons_weights),
                            last_artificial_neural_network_layer_bias)
 
+    artificial_neural_network = tensorflow.nn.dropout(artificial_neural_network, 0.25)
+
     # Reshape the Artificial Neural Network (ANN), for the return the output of the Neural Network
-    return tensorflow.reshape(artificial_neural_network, [-1])
+    return tensorflow.nn.sigmoid(artificial_neural_network, name="output")
 
 
 # The function to compute the Cost of the Logistic Error Loss,
 # between the predicted ys (Labels) of the Data of the Bank Notes,
 # through the Artificial Neural Network (ANN) and the real ys (Labels) of the Data of the Bank Notes
-def compute_logistic_error_loss_sigmoid_activation(xs_data_features_to_predict, ys_real_data_labels):
-
-    # Compute the Logit Function to the xs (Features) of the Data of the Genes
-    tensorflow_network = neural_network_prediction(xs_data_features_to_predict)
+def compute_logistic_error_loss_sigmoid_activation(ys_data_features_to_predict, ys_real_data_labels):
 
     # Compute the Cost of Logistic Error Loss, with the Logits as argument,
     # which is the activation value before applying the Sigmoid Function
     logistic_error_loss_cost = tensorflow.reduce_mean(
-        tensorflow.nn.sigmoid_cross_entropy_with_logits(ys_real_data_labels, tensorflow_network)
+        tensorflow.nn.sigmoid_cross_entropy_with_logits(ys_real_data_labels,
+                                                        ys_data_features_to_predict)
     )
 
     # Return the Cost of the Logistic Error Loss
@@ -240,7 +252,7 @@ def compute_logistic_error_loss_sigmoid_activation(xs_data_features_to_predict, 
 
 
 # The function to compute the Gradient for the Logistic Error/Loss function
-def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, layers_weights_neurons, layers_biases):
+def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, layer_variables):
 
     # Create the Gradient Tape to trace all the Computations and
     # to compute the Derivatives
@@ -256,8 +268,7 @@ def compute_gradient(xs_data_features_to_predict, ys_real_data_labels, layers_we
 
     # Return the Gradient Tape with all the traced Computations and
     # computed Derivatives, as also, the Weights of Neurons and Bias
-    return tape.gradient(loss_cost_value, [layers_weights_neurons, layers_biases]),\
-        [layers_weights_neurons, layers_biases]
+    return tape.gradient(loss_cost_value, layer_variables), layer_variables
 
 
 # The function to create a graph for Tensorboard
@@ -295,19 +306,12 @@ file_writer = tensorflow.summary.create_file_writer(log_directory)
 write_graph_tensorboard(xs_data_features_standardized_for_training, file_writer)
 
 # Configure the TensorFlow's Optimizer for the Stochastic Gradient Descent (SDG), with a Learning Rate of 10%
-stochastic_gradient_descent_optimizer = tensorflow.optimizers.SGD(learning_rate=0.005, momentum=0.9)
-
-# Set the Batch Size (i.e., the number of Samples/Examples) to
-# work through before updating the Internal Model Parameters of the Learning Algorithm,
-# and, for the Stochastic Gradient Descent (SDG), is common to use the value 1 as hyper-parameter
-batch_size = 32
+stochastic_gradient_descent_optimizer = \
+    tensorflow.optimizers.SGD(learning_rate=INITIAL_LEARNING_RATE, momentum=MOMENTUM,
+                              decay=(INITIAL_LEARNING_RATE / NUM_EPOCHS))
 
 # Set the number of Batches, per Epoch
-num_batches_per_epoch = (xs_data_features_standardized_for_training.shape[0] // batch_size)
-
-# Set the number of Epochs (i.e., the number of times) that the Learning Algorithm
-# (the Stochastic Gradient Descent (SDG), in this case) will work through the entire Dataset
-num_epochs = 1000
+num_batches_per_epoch = (xs_data_features_standardized_for_training.shape[0] // BATCH_SIZE)
 
 # Initialize the sum of the Logistic Loss, for the Training Set
 training_logistic_loss_sum = 0
@@ -326,7 +330,7 @@ def execute_artificial_neural_network(file_writer_logs):
     global validation_logistic_loss_sum
 
     # For each Epoch (i.e., each step of the Learning Algorithm)
-    for current_epoch in range(num_epochs):
+    for current_epoch in range(NUM_EPOCHS):
 
         # Shuffle the ys (Labels) for the Data of the Bank Notes
         ys_data_labels_shuffled = numpy.arange(len(ys_data_labels_standardized_for_training))
@@ -336,27 +340,27 @@ def execute_artificial_neural_network(file_writer_logs):
         for current_num_batch in range(num_batches_per_epoch):
 
             # Define the start index of the Samples
-            start_num_sample = (current_num_batch * batch_size)
+            start_num_sample = (current_num_batch * BATCH_SIZE)
 
             # Retrieve the chosen Samples from the xs (Features) of the Data of the Bank Notes,
-            # from the Training Set
+            # from the Training Set (for Fitting)
             batch_xs_data_features_standardized_for_training = \
                 tensorflow.constant(xs_data_features_standardized_for_training[ys_data_labels_shuffled[start_num_sample:
-                                                                               (start_num_sample + batch_size)], :]
+                                                                               (start_num_sample + BATCH_SIZE)], :]
                                     .astype(numpy.float32))
 
             # Retrieve the chosen Samples from the ys (Labels) of the Data of the Bank Notes,
-            # from the Training Set
+            # from the Training Set (for Fitting)
             batch_ys_data_labels_standardized_for_training = \
                 tensorflow.constant(ys_data_labels_standardized_for_training[ys_data_labels_shuffled[start_num_sample:
-                                                                             (start_num_sample + batch_size)]]
+                                                                             (start_num_sample + BATCH_SIZE)]]
                                     .astype(numpy.float32))
 
             # Compute the Gradient for the Logistic Error Loss function for
             # the chosen Samples from the xs (Features) and ys (Labels) of the Data of the Bank Notes
             gradients, variables = compute_gradient(batch_xs_data_features_standardized_for_training,
                                                     batch_ys_data_labels_standardized_for_training,
-                                                    weights_neurons_layers, biases_layers)
+                                                    variables_layers)
 
             # Apply the Gradients previously computed to the Learning Algorithm (Stochastic Gradient Descent (SDG))
             stochastic_gradient_descent_optimizer.apply_gradients(zip(gradients, variables))
@@ -422,24 +426,24 @@ def execute_artificial_neural_network(file_writer_logs):
     file_writer_logs.close()
 
     # Compute the average of the Logistic Loss, for the Training Set
-    training_logistic_loss_average = (training_logistic_loss_sum / num_epochs)
+    training_logistic_loss_average = (training_logistic_loss_sum / NUM_EPOCHS)
 
     # Compute the average of the Logistic Loss, for the Validation Set
-    validation_logistic_loss_average = (validation_logistic_loss_sum / num_epochs)
+    validation_logistic_loss_average = (validation_logistic_loss_sum / NUM_EPOCHS)
 
     # Print the information about the average of the Logistic Loss, for the Training Set
     print("\nThe average Logistic Loss for {} Epochs, in the Training Set, is: {}\n"
-          .format(num_epochs, training_logistic_loss_average))
+          .format(NUM_EPOCHS, training_logistic_loss_average))
 
     # Print the information about the average of the Logistic Loss, for the Validation Set
     print("\nThe average Logistic Loss for {} Epochs, in the Validation Set, is: {}\n"
-          .format(num_epochs, validation_logistic_loss_average))
+          .format(NUM_EPOCHS, validation_logistic_loss_average))
 
 
 # Print the configuration for the Artificial Neural Network (ANN) being used
 print("\n\nStart the execution of the Artificial Neural Network (ANN), with {} Epochs, Bath Size of {},\n"
       "with the Learning Algorithm of Stochastic Gradient Descent (SDG), "
-      "for the Dataset of the Bank Notes...\n".format(num_epochs, batch_size))
+      "for the Dataset of the Bank Notes...\n".format(NUM_EPOCHS, BATCH_SIZE))
 
 # Start the execution of the Artificial Neural Network (ANN), for the the Prediction of
 # the Data of the Bank Notes
