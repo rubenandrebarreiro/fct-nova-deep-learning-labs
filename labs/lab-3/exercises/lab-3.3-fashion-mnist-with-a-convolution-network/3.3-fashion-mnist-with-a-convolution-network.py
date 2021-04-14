@@ -158,7 +158,7 @@ def create_convolution_neural_network_model():
     convolution_neural_network_model.add(Flatten())
 
     # Add a Dense Matrix of the Convolution Neural Network (CNN),
-    # with the Data of the Fashion Modified NIST (Fashion MNIST) and 10 Units
+    # with the Data of the Fashion Modified NIST (Fashion MNIST) and 512 Units
     convolution_neural_network_model.add(Dense(512))
 
     # Add the Rectified Linear Unit (ReLU) as Activation Function Layer,
