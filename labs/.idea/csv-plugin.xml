@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\lab-2\exercises\lab-2.4-bank-notes-classification-network\2.4-bank-notes-classification-network.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\lab-2\exercises\lab-2.4-bank-notes-classification-network\files\bank_notes.csv">
           <value>
             <Attribute>
@@ -32,6 +39,20 @@
           </value>
         </entry>
         <entry key="\lab-3\exercises\lab-3.1-introduction-keras-sequential-api-in-tensorflow\3.1-introduction-keras-sequential-api-in-tensorflow.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\lab-3\exercises\lab-3.3-fashion-mnist-with-a-convolution-network\3.3-fashion-mnist-with-a-convolution-network.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\lab-4\exercises\lab-4.1-transfer-learning-with-the-keras-functional-api\4.1-transfer-learning-with-the-keras-functional-api.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
