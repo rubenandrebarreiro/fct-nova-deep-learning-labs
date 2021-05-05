@@ -88,10 +88,10 @@ multi_class_model = load_model('multi-class-model')
 dataset = load_data()
 
 # The Index of the Image
-image_ix = 8
+image_ix = 8  # NOTE: Change the Index, to try other images
 
 # The Sub-set of data to be used
-subset = 'test_X'
+subset = 'test_X'  # NOTE: Change the Index, to try other Sub-Sets
 
 # The xs (features) of the Test Set
 image_xs = dataset[subset][image_ix:image_ix + 1]
