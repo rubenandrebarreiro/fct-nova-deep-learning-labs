@@ -1,0 +1,10 @@
+Bug
+Fighting
+Fire
+Flying
+Grass
+Ground
+Normal
+Poison
+Rock
+Water
