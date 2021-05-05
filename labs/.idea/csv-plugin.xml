@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\lab-7\exercises\lab-7.1-occlusion-and-saliency-maps\dataset\labels.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
