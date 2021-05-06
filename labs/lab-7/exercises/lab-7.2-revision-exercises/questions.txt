@@ -64,3 +64,32 @@
 #   is a Binary Cross-Entropy Loss Function;
 
 -------------------------------------------------------------------------------"
+
+# c) Generative Adversarial Network (GAN) and Generating Pokémon
+
+# Question #1:
+# - In a GAN, what is the input to the generative model?
+# Answer #1:
+# - The input of the Generative Model, in a Generative Adversarial Network (GAN),
+#   is a vector of random values (i.e., noise), from which, will be generated
+#   new instances (representations) of the original data;
+
+# Question #2:
+# - What is the role of the discriminative model?
+# Answer #2:
+# - The role of the Discriminative Model is to distinguish
+#   the original (real) data, from the data created by
+#   the Generative Model;
+# - Basically, the Generative Model creates new data, from a random (noise) input,
+#   and, the Discriminative Model distinguish the new data generated, from the original data.
+
+# Question #3:
+# - Why is the discriminative model frozen when training the generative model?
+# Answer #3:
+# - The Training of the Generative Adversarial Networks (GANs), consists in alternate between
+#   the Training of the Generative Model and Training of the Discriminative Model,
+#   from which, when is occurring the Training of the Generative Model,
+#   the Discriminative Model is frozen, to allow it, to classify the generated images from
+#   the random (noise) inputs, properly, as real images;
+
+-------------------------------------------------------------------------------"
