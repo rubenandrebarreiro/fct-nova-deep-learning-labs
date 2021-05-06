@@ -49,7 +49,7 @@
 # - How many neurons and which activation function did you use in the output of your network?
 # - Why?
 # Answer #2:
-# - It was used 6 Neurons, in total, 5 for the Hidden Layers and 1 for the Output Layer,
+# - It were used 6 Neurons, in total, 5 for the Hidden Layers and 1 for the Output Layer,
 #   because the Convolutional Neural Networks (C.N.N.) are Deep Classifiers and
 #   need more Non-Linear Transformations, to extract more representations of the initial features,
 #   and since this is a problem with just two classes (Odd and Even),
@@ -81,7 +81,7 @@
 #   the original (real) data, from the data created by
 #   the Generative Model;
 # - Basically, the Generative Model creates new data, from a random (noise) input,
-#   and, the Discriminative Model distinguish the new data generated, from the original data.
+#   and, the Discriminative Model distinguishes the new data generated, from the original data.
 
 # Question #3:
 # - Why is the discriminative model frozen when training the generative model?
