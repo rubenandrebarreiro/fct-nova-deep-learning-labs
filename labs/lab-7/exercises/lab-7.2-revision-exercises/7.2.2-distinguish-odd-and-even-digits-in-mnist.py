@@ -1,5 +1,5 @@
 """
-Lab 7.3 - Distinguish Odd and Even Digits in MNIST
+Lab 7.2.2 - Distinguish Odd and Even Digits in MNIST
 
 Author:
 - Rodrigo Jorge Ribeiro (rj.ribeiro@campus.fct.unl.pt)

@@ -1,5 +1,5 @@
 """
-Lab 7.2 - Polynomial Regression with TensorFlow
+Lab 7.2.1 - Polynomial Regression with TensorFlow
 
 Author:
 - Rodrigo Jorge Ribeiro (rj.ribeiro@campus.fct.unl.pt)
