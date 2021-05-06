@@ -30,3 +30,37 @@
 # - The Mean Squared Error (M.S.E.) is the more adequate for this problem, since it finds
 #   the average squared difference between the predicted ys (Prediction_Labels)
 #   and the true ys (True_Labels) for Numerical Continuous Values;
+
+-------------------------------------------------------------------------------"
+
+# b) Distinguish Odd and Even Digits in MNIST
+
+# Question #1:
+# - Which activation function did you use in the hidden layers?
+# - Why?
+# Answer #1:
+# - In the Hidden Layers, it was used the Rectified Linear Unit (ReLU) Activation Function,
+#   since it rectifies and solves the Vanishing Gradient Problem, in which, for Deep Neural Networks,
+#   it cannot propagate useful gradient information from the output layer to the initial layers,
+#   due to the small derivatives resulted from some other Activation Functions, such as,
+#   the Sigmoid or Softmax Activation Functions;
+
+# Question #2:
+# - How many neurons and which activation function did you use in the output of your network?
+# - Why?
+# Answer #2:
+# - It was used 6 Neurons, in total, 5 for the Hidden Layers and 1 for the Output Layer,
+#   because the Convolutional Neural Networks (C.N.N.) are Deep Classifiers and
+#   need more Non-Linear Transformations, to extract more representations of the initial features,
+#   and since this is a problem with just two classes (Odd and Even),
+#   it can be considered a Binary Classification problem, for which, the Sigmoid Activation Function
+#   is more adequate;
+
+# Question #3:
+# - Which loss function did you use in this case?
+# Answer #3:
+# - Since this is a problem with just two classes (Odd and Even) and a Binary Classification problem,
+#   where is used a final Sigmoid Classifier in the Output Layer, the Loss Function in this case,
+#   is a Binary Cross-Entropy Loss Function;
+
+-------------------------------------------------------------------------------"
