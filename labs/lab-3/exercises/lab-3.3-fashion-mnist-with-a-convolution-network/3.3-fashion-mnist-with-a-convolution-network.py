@@ -15,12 +15,21 @@ import os as operative_system
 # Disable all the Debugging Logs from TensorFlow Library
 operative_system.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+# Import the Multiprocessing Library
+import multiprocessing
+
+# Import the TensorFlow Library
+import tensorflow
+
 # Import Keras from the TensorFlow Library
 from tensorflow import keras
 
 # Import the Stochastic Gradient Descent (SGD) Optimizer
 # from the TensorFlow.Keras.Optimizers Module
 from tensorflow.keras.optimizers import SGD
+
+# Import the Backend Module from the TensorFlow.Python.Keras Python's Module
+from tensorflow.python.keras import backend as keras_backend
 
 # Import the Sequential from the TensorFlow.Keras.Models Module
 from tensorflow.keras.models import Sequential
@@ -34,6 +43,16 @@ from tensorflow.keras.layers import Activation, Flatten, Dropout, Dense
 
 # Constants
 
+# The boolean flag, to keep information about
+# the use of High-Performance Computing (with CPUs and GPUs)
+TENSORFLOW_KERAS_HPC_BACKEND_SESSION = True
+
+# The Number of CPU's Processors/Cores
+NUM_CPU_PROCESSORS_CORES = multiprocessing.cpu_count()
+
+# The Number of GPU's Devices
+NUM_GPU_DEVICES = len(tensorflow.config.list_physical_devices('GPU'))
+
 # The Learning Rate for the Stochastic Gradient Descent (SGD) Optimizer of
 # the Convolution Neural Network (CNN), as 1%
 INITIAL_LEARNING_RATE = 0.01
@@ -44,6 +63,31 @@ NUM_EPOCHS = 25
 
 # The Size of the Batch for the the Convolution Neural Network (CNN), as 128
 BATCH_SIZE = 128
+
+
+# If the boolean flag, to keep information about
+# the use of High-Performance Computing (with CPUs and GPUs) is set to True
+if TENSORFLOW_KERAS_HPC_BACKEND_SESSION:
+
+    # Print the information about if the Model will be executed,
+    # using High-Performance Computing (with CPUs and GPUs)
+    print('\n')
+    print('It will be used High-Performance Computing (with CPUs and GPUs):')
+    print(' - Num. CPUS: ', NUM_CPU_PROCESSORS_CORES)
+    print(' - Num. GPUS: ', NUM_GPU_DEVICES)
+    print('\n')
+
+    # Set the Configuration's Proto, for the given number of Devices (CPUs and GPUs)
+    configuration_proto = \
+        tensorflow.compat.v1.ConfigProto(device_count={'CPU': NUM_CPU_PROCESSORS_CORES,
+                                                       'GPU': NUM_GPU_DEVICES})
+
+    # Configure a TensorFlow Session for High-Performance Computing (with CPUs and GPUs)
+    session = tensorflow.compat.v1.Session(config=configuration_proto)
+
+    # Set the current Keras' Backend, with previously configured
+    # TensorFlow Session for High-Performance Computing (with CPUs and GPUs)
+    keras_backend.set_session(session)
 
 
 # Load the Dataset of the Fashion Modified NIST (Fashion MNIST),
@@ -252,7 +296,15 @@ print(f"\nFitting the Convolution Neural Network (CNN) Model for {NUM_EPOCHS} Ep
 # with the Training Data for the Training Set and the Testing Data for the Validation Set
 cnn_model_training_history = cnn_model.fit(xs_features_training_data, ys_labels_training_data,
                                            validation_data=(xs_features_testing_data, ys_labels_testing_data),
-                                           batch_size=BATCH_SIZE, epochs=NUM_EPOCHS)
+                                           batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,)
+
+
+# the use of High-Performance Computing (with CPUs and GPUs) is set to True
+if TENSORFLOW_KERAS_HPC_BACKEND_SESSION:
+
+    # Clear the current session of the Keras' Backend
+    keras_backend.clear_session()
+
 
 # Print the final Log for the Fitting of the Convolution Neural Network (CNN) Model
 print("\nThe Fitting of the Convolution Neural Network (CNN) Model is complete!!!\n")
