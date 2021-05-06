@@ -1,5 +1,5 @@
 """
-Lab 7.1 - Occlusion Maps
+Lab 7.1 - Occlusion and Saliency Maps
 
 Author:
 - Rodrigo Jorge Ribeiro (rj.ribeiro@campus.fct.unl.pt)

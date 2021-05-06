@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\lab-7\exercises\lab-7.2-revision-exercises\polydata.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
