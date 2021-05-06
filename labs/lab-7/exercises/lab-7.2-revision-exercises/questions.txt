@@ -1,0 +1,32 @@
+# Lab 7.2 - Revision Questions
+
+# a) Polynomial Regression with TensorFlow
+
+# Question #1:
+# - What is the activation function of this neuron? Why?
+# Answer #1:
+# - The Activation Function used in this Neuron was the Linear Activation Function
+#   because this is a Linear Regression problem, where it is intended to
+#   predict a Numerical Continuous Value, which can be a negative one;
+
+# Question #2:
+# - What is the shape of the weights matrix for the neurons?
+# - Does this matrix include the w_0 parameter in the equation above?
+# Answer #2:
+# - The shape of the weights matrix is (degree, 1), i.e.,
+#   a column-vector with n elements, where n is the number of degrees used,
+#   since this neuron with a Linear Activation Function, follows the form of
+#   a Polynomial Equation, z = w_0 + (w_1 x x) + (w_2 x x^2) + (w_3 x x^3) + ...,
+#   so it have a weight for each expanded feature, which will result on n final features,
+#   excluding the weight w_0;
+# - No, this matrix (or, column-vector) for the weights, does not include the weight w_0,
+#   because it corresponds to the bias variable;
+
+# Question #3:
+# - What loss function did you use?
+# - What is the justification for using this loss function?
+# Answer #3:
+# - For the Loss Function of this problem, it is used the Mean Squared Error (M.S.E.);
+# - The Mean Squared Error (M.S.E.) is the more adequate for this problem, since it finds
+#   the average squared difference between the predicted ys (Prediction_Labels)
+#   and the true ys (True_Labels) for Numerical Continuous Values;
