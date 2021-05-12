@@ -31,6 +31,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\lab-8\lab-8.1-time-series-prediction\passengers.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
