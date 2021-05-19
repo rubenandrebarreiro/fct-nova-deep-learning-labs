@@ -38,6 +38,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\lab-8\lab-8.2-air-pollution-forecasting\pollution-raw.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\lab-8\lab-8.2-air-pollution-forecasting\pollution.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
